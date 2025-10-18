@@ -26,4 +26,4 @@ jobs:
         uses: actions/upload-artifact@v4.3.0
         with:
           name: mod-jar
-          path: build/libs/*.jar
+          path: versions/1.8.9-forge/build/libs/*.jar

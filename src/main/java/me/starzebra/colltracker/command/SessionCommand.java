@@ -10,7 +10,7 @@ import me.starzebra.colltracker.config.SimpleConfig;
 import me.starzebra.colltracker.features.SackChatListener;
 import net.minecraft.util.ChatComponentText;
 
-import java.util.HashMap;
+import java.util.Map;
 
 @SuppressWarnings("unused")
 @Command(value = "tsession", aliases = {"ts"})
@@ -39,10 +39,14 @@ public class SessionCommand {
     @SubCommand
     private void startset(@Greedy String arg){
         if(!CollTracker.isSessionActive()){
-            HashMap<Integer, String> colls = SackChatListener.supportedCollections;
+            Map<Integer, String> colls = SackChatListener.supportedCollections;
+            if(colls.isEmpty()) {
+                CollTracker.mc.thePlayer.addChatMessage(new ChatComponentText("§cCollection list is empty, do '/cttryfetchcollections' and try again."));
+                return;
+            }
             int i = 0;
             for (String coll : colls.values()){
-                if(arg.equalsIgnoreCase(coll)){
+                if(coll.toLowerCase().startsWith(arg.toLowerCase())){
                     CollTracker.session = new TrackerSession(colls.get(i));
                     SimpleConfig.collection = i;
                     CollTracker.session.start();

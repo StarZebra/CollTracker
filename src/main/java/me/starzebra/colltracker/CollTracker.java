@@ -1,6 +1,7 @@
 package me.starzebra.colltracker;
 
 import cc.polyfrost.oneconfig.events.EventManager;
+import me.starzebra.colltracker.command.FetchCommand;
 import me.starzebra.colltracker.command.SessionCommand;
 import me.starzebra.colltracker.config.SimpleConfig;
 import me.starzebra.colltracker.events.SecondPassedEvent;
@@ -8,6 +9,7 @@ import me.starzebra.colltracker.events.SecondTimer;
 import me.starzebra.colltracker.features.SackChatListener;
 import me.starzebra.colltracker.features.SkymallListener;
 import me.starzebra.colltracker.statistics.StatsHelper;
+import me.starzebra.colltracker.utils.APIFetcher;
 import me.starzebra.colltracker.utils.LocationUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.common.MinecraftForge;
@@ -26,6 +28,7 @@ public class CollTracker {
 
     public static File statsDir = new File("config/colltracker");
     public static final Logger LOGGER = LogManager.getLogger("CollTracker");
+    public static final String COLLECTION_URL = "https://api.hypixel.net/v2/resources/skyblock/collections";
 
     public static SimpleConfig config;
     public static Minecraft mc;
@@ -39,7 +42,11 @@ public class CollTracker {
     @Mod.EventHandler
     public void init(FMLInitializationEvent event) {
         mc = Minecraft.getMinecraft();
+
+        new Thread(() -> SackChatListener.supportedCollections = APIFetcher.fetchCollections(COLLECTION_URL)).start();
+
         config = new SimpleConfig();
+
         MinecraftForge.EVENT_BUS.register(new SackChatListener());
         MinecraftForge.EVENT_BUS.register(new LocationUtils());
         MinecraftForge.EVENT_BUS.register(new SecondTimer());
@@ -50,6 +57,7 @@ public class CollTracker {
 
         //Commands
         CommandManager.register(new SessionCommand());
+        CommandManager.register(new FetchCommand());
 
         //Save stats file on quit
         Runtime.getRuntime().addShutdownHook(new Thread(StatsHelper::save));

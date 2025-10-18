@@ -99,6 +99,9 @@ dependencies {
         shade("cc.polyfrost:oneconfig-wrapper-launchwrapper:1.0.0-beta17")
     }
     implementation(kotlin("stdlib-jdk8"))
+
+    //Apache HTTPClient
+    implementation("org.apache.httpcomponents.client5:httpclient5-fluent:5.5.1")
 }
 
 tasks {

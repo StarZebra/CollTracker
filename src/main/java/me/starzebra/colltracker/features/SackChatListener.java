@@ -15,8 +15,12 @@ import net.minecraftforge.fml.common.network.FMLNetworkEvent;
 import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class SackChatListener {
+
+    public static Map<Integer, String> supportedCollections = new HashMap<>();
+
 
     final int ENCHANTED = 160;
     long TIMEOUT_NANOS = 60000000000L;
@@ -52,14 +56,6 @@ public class SackChatListener {
         }
     }
 
-    public static final HashMap<Integer, String> supportedCollections = new HashMap<Integer, String>() {{
-        put(0, "Diamond");
-        put(1, "Gold");
-        put(2, "Emerald");
-        put(3, "Lapis");
-        put(4, "Redstone");
-        put(5, "Coal");
-    }};
 
     @SubscribeEvent
     public void onChatReceive(ClientChatReceivedEvent event) {
@@ -74,7 +70,9 @@ public class SackChatListener {
             String str = message.getUnformattedText().substring(timeIndex, message.getUnformattedText().lastIndexOf("s"));
             int seconds = Integer.parseInt(str.split("t")[1].trim());
 
-            String trackedColl = supportedCollections.get(SimpleConfig.collection);
+            String trackedColl = supportedCollections.get(SimpleConfig.collection).toLowerCase();
+
+            if(trackedColl.equals("gravel")) trackedColl = "flint";
 
             int removedAmount = getAmountFromMessage(message, trackedColl, REMOVED_INDEX);
 

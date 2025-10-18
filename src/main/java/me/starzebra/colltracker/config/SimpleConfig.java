@@ -44,7 +44,22 @@ public class SimpleConfig extends Config {
 
     @Dropdown(
             name = "Collection to Track",
-            options = {"Diamond","Gold","Emerald","Lapis","Redstone","Coal"},
+            //FUCK YOU OneConfig
+            options = {
+                    "Lapis Lazuli", "Redstone Dust",
+                    "Umber", "Coal",
+                    "Mycelium", "End Stone",
+                    "Nether Quartz", "Sand",
+                    "Iron Ingot", "Gemstone",
+                    "Tungsten", "Obsidian",
+                    "Diamond", "Cobblestone",
+                    "Glowstone Dust", "Gold Ingot",
+                    "Flint", "Hard Stone",
+                    "Mithril", "Emerald",
+                    "Red Sand", "Ice",
+                    "Glacite", "Sulphur",
+                    "Netherrack"},
+
             category = "Mining"
     )
     public static int collection = 0;
