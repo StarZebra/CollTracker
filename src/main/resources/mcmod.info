@@ -5,14 +5,11 @@
     "description": "Mod that helps with a collection or two",
     "version": "${version}",
     "mcversion": "${mcVersionStr}",
-    "url": "",
     "updateUrl": "",
     "authorList": [
       "iMacroDiamonds"
     ],
     "credits": "",
-    "logoFile": "",
-    "screenshots": [],
-    "dependencies": []
+    "logoFile": ""
   }
 ]
