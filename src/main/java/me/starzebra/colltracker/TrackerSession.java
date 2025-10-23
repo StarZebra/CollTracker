@@ -144,9 +144,9 @@ public class TrackerSession {
         if(sackUpdatesList.size() > MAX_LIST_SIZE){
 
             if(Math.random() > 0.5){
-                sackUpdatesList.removeLast();
+                sackUpdatesList.remove(sackUpdatesList.size()-1);
             }else{
-                sackUpdatesList.removeFirst();
+                sackUpdatesList.remove(0);
             }
 
         }
