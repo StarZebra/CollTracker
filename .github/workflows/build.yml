@@ -1,7 +1,7 @@
 name: Run Gradle Build
 on:
-  - push
-  - pull_request
+  #- push
+  #- pull_request
 
 jobs:
   gradle:

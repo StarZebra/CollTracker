@@ -5,9 +5,9 @@ import me.starzebra.colltracker.hud.CollectionHUD;
 import me.starzebra.colltracker.statistics.StatsManager;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 public class TrackerSession {
 
@@ -19,6 +19,7 @@ public class TrackerSession {
     int totalItemsGained;
     int trackedSeconds;
     List<Integer> sackUpdatesList;
+    final int MAX_LIST_SIZE = 100;
 
     long pausedNanos;
     long resumedNanos;
@@ -103,6 +104,8 @@ public class TrackerSession {
 
     public void increaseTotalItems(int gain){
         this.totalItemsGained += gain;
+        if(gain < 160) return;
+        updateSackList(gain/160);
     }
 
     public void increaseTrackedSeconds(int gain){
@@ -125,10 +128,6 @@ public class TrackerSession {
         return isPaused;
     }
 
-    public long getStartNanos(){
-        return sessionStartNanos;
-    }
-
     public long getLastSackMessageNanos(){
         return lastSackMessageNanos;
     }
@@ -137,8 +136,20 @@ public class TrackerSession {
         return totalItemsGained;
     }
 
-    public int getTrackedSeconds(){
-        return trackedSeconds;
+    private void updateSackList(int value){
+        int index = Collections.binarySearch(sackUpdatesList, value);
+        if(index < 0) index = -index - 1;
+        this.sackUpdatesList.add(index, value);
+
+        if(sackUpdatesList.size() > MAX_LIST_SIZE){
+
+            if(Math.random() > 0.5){
+                sackUpdatesList.removeLast();
+            }else{
+                sackUpdatesList.removeFirst();
+            }
+
+        }
     }
 
     public long getElapsedSeconds(){
@@ -158,13 +169,11 @@ public class TrackerSession {
     }
 
     public int getMedianItems(){
-
-        //NEEDS TESTING
-        System.out.println("Unsorted: " + sackUpdatesList);
-        List<Integer> sortedList = sackUpdatesList.stream().sorted().collect(Collectors.toList());
-        System.out.println("Sorted: " + sortedList);
+        List<Integer> sortedList = sackUpdatesList;
 
         int middle = sortedList.size() / 2;
+
+        if(sortedList.isEmpty()) return 0;
 
         return sortedList.get(middle);
 

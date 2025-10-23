@@ -99,7 +99,6 @@ public class SackChatListener {
 
             CollTracker.session.increaseTrackedSeconds(seconds);
             CollTracker.session.increaseTotalItems(gainAmount);
-
             CollTracker.session.updateSackMessage();
 
             CollectionHUD.displayedCPH = String.format("%,d", CollTracker.session.getCollectionPerHour()) +"/h";
