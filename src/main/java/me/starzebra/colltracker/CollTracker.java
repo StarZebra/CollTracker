@@ -1,6 +1,8 @@
 package me.starzebra.colltracker;
 
 import cc.polyfrost.oneconfig.events.EventManager;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import me.starzebra.colltracker.command.FetchCommand;
 import me.starzebra.colltracker.command.SessionCommand;
 import me.starzebra.colltracker.config.SimpleConfig;
@@ -21,18 +23,23 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.io.File;
+import java.io.*;
+import java.util.HashMap;
+import java.util.Map;
 
 @Mod(modid = "colltracker", useMetadata=true)
 public class CollTracker {
 
     public static File statsDir = new File("config/colltracker");
+    public static File collectionsFile = new File(statsDir, "collections.json");
     public static final Logger LOGGER = LogManager.getLogger("CollTracker");
     public static final String COLLECTION_URL = "https://api.hypixel.net/v2/resources/skyblock/collections";
 
     public static SimpleConfig config;
     public static Minecraft mc;
     public static TrackerSession session;
+
+    private static boolean shouldSaveCollections = false;
 
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event){
@@ -43,7 +50,19 @@ public class CollTracker {
     public void init(FMLInitializationEvent event) {
         mc = Minecraft.getMinecraft();
 
-        new Thread(() -> SackChatListener.supportedCollections = APIFetcher.fetchCollections(COLLECTION_URL)).start();
+        if(!collectionsFile.exists() && shouldSaveCollections){
+            mc.addScheduledTask(() -> SackChatListener.supportedCollections = APIFetcher.fetchCollections(COLLECTION_URL));
+
+            try {
+                if(collectionsFile.createNewFile()){
+                    trySaveCollectionsFile();
+                }
+            } catch (IOException e) {
+                LOGGER.error("Failed to create file {} ts cooked", collectionsFile);
+            }
+        } else {
+            tryLoadCollectionsFile();
+        }
 
         config = new SimpleConfig();
 
@@ -54,6 +73,9 @@ public class CollTracker {
         MinecraftForge.EVENT_BUS.register(this);
         //OneConfig events
         EventManager.INSTANCE.register(new LocationUtils());
+
+        //TODO: only download collections on firstrun, then save the file somewhere and use that going forward, only download collections again when doing the command
+        // and also check if file is missing on startup and then download
 
         //Commands
         CommandManager.register(new SessionCommand());
@@ -68,10 +90,45 @@ public class CollTracker {
         if(event.getTotalSeconds() % 60 == 0){
             StatsHelper.save();
         }
+        if(shouldSaveCollections && event.getTotalSeconds() % 20 == 0){
+            trySaveCollectionsFile();
+        }
+    }
+
+    private void trySaveCollectionsFile(){
+        Map<Integer, String> collections = SackChatListener.supportedCollections;
+        if (collections.isEmpty()) return;
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        try (FileWriter writer = new FileWriter(collectionsFile)){
+            gson.toJson(collections, writer);
+            LOGGER.info("Successfully wrote to file {}", collectionsFile);
+            shouldSaveCollections = false;
+        } catch (IOException e) {
+            LOGGER.error("Failed to write to file {}", collectionsFile);
+            LOGGER.error(e.getStackTrace());
+        }
+    }
+
+    private void tryLoadCollectionsFile(){
+        if(!collectionsFile.exists()) return;
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        try (FileReader reader = new FileReader(collectionsFile)){
+            Map<String, String> data = gson.fromJson(reader, Map.class);
+            Map<Integer, String> realData = new HashMap<>();
+            if(data == null) return;
+            LOGGER.info("Successfully read from file {}",collectionsFile);
+            data.forEach((k,v) -> realData.put(Integer.parseInt(String.valueOf(k)), v));
+            SackChatListener.supportedCollections = realData;
+        } catch (IOException e) {
+            LOGGER.error("Failed to read file {}",collectionsFile);
+            LOGGER.error(e.getStackTrace());
+        }
     }
 
     public static boolean isSessionActive(){
         return session != null && session.isActive();
     }
+
+
 
 }
