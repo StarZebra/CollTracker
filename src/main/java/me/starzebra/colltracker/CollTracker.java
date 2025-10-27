@@ -39,7 +39,7 @@ public class CollTracker {
     public static Minecraft mc;
     public static TrackerSession session;
 
-    private static boolean shouldSaveCollections = false;
+    private static boolean shouldSaveCollections = true;
 
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event){
@@ -71,11 +71,9 @@ public class CollTracker {
         MinecraftForge.EVENT_BUS.register(new SecondTimer());
         MinecraftForge.EVENT_BUS.register(new SkymallListener());
         MinecraftForge.EVENT_BUS.register(this);
+
         //OneConfig events
         EventManager.INSTANCE.register(new LocationUtils());
-
-        //TODO: only download collections on firstrun, then save the file somewhere and use that going forward, only download collections again when doing the command
-        // and also check if file is missing on startup and then download
 
         //Commands
         CommandManager.register(new SessionCommand());
@@ -119,6 +117,7 @@ public class CollTracker {
             LOGGER.info("Successfully read from file {}",collectionsFile);
             data.forEach((k,v) -> realData.put(Integer.parseInt(String.valueOf(k)), v));
             SackChatListener.supportedCollections = realData;
+            shouldSaveCollections = false;
         } catch (IOException e) {
             LOGGER.error("Failed to read file {}",collectionsFile);
             LOGGER.error(e.getStackTrace());

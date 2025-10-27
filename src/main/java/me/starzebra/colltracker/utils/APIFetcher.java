@@ -32,9 +32,8 @@ public class APIFetcher {
                     list.add(item.getValue().getAsJsonObject().get("name").getAsString());
                 }
 
-                //System.out.println(list);
-
                 return parseData(list);
+
             }else{
                 CollTracker.LOGGER.error("ERROR FETCHING COLLECTIONS");
                 CollTracker.LOGGER.error("CODE: {}, REASON: {}", response.getCode(), response.getReasonPhrase());
@@ -53,9 +52,18 @@ public class APIFetcher {
 
         if(data == null || data.isEmpty()) return result;
 
-        for (int i = 0; i < data.size(); i++) {
-            String item = data.get(i).trim();
+        int i = 0;
+        for (String item : data){
+            item = item.trim();
+            switch (item) { // Doing some light cleanup for edge case collections
+                case "Gravel":
+                    item = "Flint";
+                    break;
+                case "Gemstone":
+                    continue;
+            }
             result.put(i, item);
+            i++;
         }
 
         return result;

@@ -72,8 +72,6 @@ public class SackChatListener {
 
             String trackedColl = supportedCollections.get(SimpleConfig.collection).toLowerCase();
 
-            if(trackedColl.equals("gravel")) trackedColl = "flint";
-
             int removedAmount = getAmountFromMessage(message, trackedColl, REMOVED_INDEX);
 
             int gainAmount = getAmountFromMessage(message, trackedColl, GAINED_INDEX);

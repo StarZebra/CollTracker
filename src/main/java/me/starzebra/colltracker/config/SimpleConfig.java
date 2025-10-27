@@ -50,15 +50,14 @@ public class SimpleConfig extends Config {
                     "Umber", "Coal",
                     "Mycelium", "End Stone",
                     "Nether Quartz", "Sand",
-                    "Iron Ingot", "Gemstone",
-                    "Tungsten", "Obsidian",
-                    "Diamond", "Cobblestone",
-                    "Glowstone Dust", "Gold Ingot",
-                    "Flint", "Hard Stone",
-                    "Mithril", "Emerald",
-                    "Red Sand", "Ice",
-                    "Glacite", "Sulphur",
-                    "Netherrack"},
+                    "Iron Ingot", "Tungsten",
+                    "Obsidian", "Diamond",
+                    "Cobblestone", "Glowstone Dust",
+                    "Gold Ingot", "Flint",
+                    "Hard Stone", "Mithril",
+                    "Emerald", "Red Sand",
+                    "Ice", "Glacite",
+                    "Sulphur", "Netherrack"},
 
             category = "Mining"
     )
