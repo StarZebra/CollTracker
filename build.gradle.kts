@@ -101,7 +101,8 @@ dependencies {
     implementation(kotlin("stdlib-jdk8"))
 
     //Apache HTTPClient
-    implementation("org.apache.httpcomponents.client5:httpclient5-fluent:5.5.1")
+    modShade("org.apache.httpcomponents.client5:httpclient5-fluent:5.5.1")
+    //implementation("org.apache.httpcomponents.client5:httpclient5-fluent:5.5.1")
 }
 
 tasks {
