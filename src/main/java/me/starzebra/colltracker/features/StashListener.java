@@ -63,10 +63,10 @@ public class StashListener {
                     String strCount = itemName.substring(itemName.indexOf("x") +1);
                     int gainAmount = Integer.parseInt(strCount.replaceAll(",", ""));
                     MinecraftForge.EVENT_BUS.post(new StashUpdateEvent(gainAmount, System.nanoTime()));
-                    openedStash = false;
                     break;
                 }
             }
+            openedStash = false;
         }
     }
 }
