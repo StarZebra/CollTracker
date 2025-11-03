@@ -140,7 +140,7 @@ public class SackChatListener {
         List<IChatComponent> siblings = style.getChatHoverEvent().getValue().getSiblings();
         for (int i = 0; i < siblings.size(); i++) {
             IChatComponent sibling = siblings.get(i);
-            if (sibling.getUnformattedText().toLowerCase().contains(trackedColl)) {
+            if (sibling.getUnformattedText().toLowerCase().contains(trackedColl.toLowerCase())) {
                 int amount = Integer.parseInt(siblings.get(i - 1).getUnformattedText().trim().replaceAll("[,\\-]", ""));
                 String item = sibling.getUnformattedText();
                 if (item.startsWith("Enchanted ")) {
