@@ -10,6 +10,7 @@ import me.starzebra.colltracker.events.SecondPassedEvent;
 import me.starzebra.colltracker.events.SecondTimer;
 import me.starzebra.colltracker.features.SackChatListener;
 import me.starzebra.colltracker.features.SkymallListener;
+import me.starzebra.colltracker.features.StashListener;
 import me.starzebra.colltracker.statistics.StatsHelper;
 import me.starzebra.colltracker.utils.APIFetcher;
 import me.starzebra.colltracker.utils.LocationUtils;
@@ -70,6 +71,8 @@ public class CollTracker {
         MinecraftForge.EVENT_BUS.register(new LocationUtils());
         MinecraftForge.EVENT_BUS.register(new SecondTimer());
         MinecraftForge.EVENT_BUS.register(new SkymallListener());
+        MinecraftForge.EVENT_BUS.register(new StashListener());
+
         MinecraftForge.EVENT_BUS.register(this);
 
         //OneConfig events

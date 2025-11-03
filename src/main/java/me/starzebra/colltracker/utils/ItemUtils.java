@@ -13,4 +13,17 @@ public class ItemUtils {
             return "";
         }
     }
+
+    public static String getItemName(ItemStack itemStack){
+        try {
+            NBTTagCompound nbt = itemStack.getSubCompound("display", false);
+            return nbt.getString("Name");
+        } catch (Exception e) {
+            return "";
+        }
+    }
+
+    public static String getUnformattedItemName(ItemStack itemStack){
+        return getItemName(itemStack).replaceAll("§[a-z0-9]", "");
+    }
 }

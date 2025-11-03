@@ -14,6 +14,7 @@ public class TrackerSession {
     String trackedCollection;
     boolean isActive;
     boolean isPaused;
+    boolean firstStashUpdate;
     long sessionStartNanos;
     long lastSackMessageNanos;
     int totalItemsGained;
@@ -32,6 +33,15 @@ public class TrackerSession {
         this.totalItemsGained = 0;
         this.trackedSeconds = 0;
         this.sackUpdatesList = new ArrayList<>();
+        this.firstStashUpdate = false;
+    }
+
+    public void setFirstStashUpdate(boolean bool){
+        this.firstStashUpdate = bool;
+    }
+
+    public boolean hasFirstStashUpdate(){
+        return firstStashUpdate;
     }
 
     public void start(){

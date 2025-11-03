@@ -5,6 +5,7 @@ import me.starzebra.colltracker.CollTracker;
 import me.starzebra.colltracker.config.SimpleConfig;
 import me.starzebra.colltracker.features.SackChatListener;
 
+import java.text.DecimalFormat;
 import java.util.List;
 
 public class CollectionHUD extends TextHud {
@@ -40,6 +41,13 @@ public class CollectionHUD extends TextHud {
                 lines.add("§c§lPAUSED");
             }
         }
+    }
+
+    public static void updateLines(){
+        displayedCPH = String.format("%,d", CollTracker.session.getCollectionPerHour()) +"/h";
+        displayedGain = String.format("%,d", CollTracker.session.getTotalItemsGained());
+        efficiencyStr = new DecimalFormat("#.##").format(CollTracker.session.getEfficiency() * 100) + "%";
+        medianStr = String.format("%,d", CollTracker.session.getMedianItems());
     }
 
     public static void clearLines(){

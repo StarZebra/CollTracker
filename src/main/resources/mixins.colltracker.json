@@ -10,5 +10,7 @@
     "MixinPlayerControllerMP"
   ],
   "verbose": true,
-  "mixins": []
+  "mixins": [
+    "MixinNetworkManager"
+  ]
 }

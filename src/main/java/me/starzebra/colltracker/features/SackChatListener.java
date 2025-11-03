@@ -4,6 +4,7 @@ import me.starzebra.colltracker.CollTracker;
 import me.starzebra.colltracker.TrackerSession;
 import me.starzebra.colltracker.config.SimpleConfig;
 import me.starzebra.colltracker.events.SecondPassedEvent;
+import me.starzebra.colltracker.events.StashUpdateEvent;
 import me.starzebra.colltracker.hud.CollectionHUD;
 import me.starzebra.colltracker.utils.LocationUtils;
 import net.minecraft.util.ChatStyle;
@@ -12,7 +13,6 @@ import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.network.FMLNetworkEvent;
 
-import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -56,6 +56,26 @@ public class SackChatListener {
         }
     }
 
+    @SubscribeEvent
+    public void onStashUpdate(StashUpdateEvent event){
+        if(!CollTracker.isSessionActive()) return;
+        if(CollTracker.session.isPaused()) return;
+
+        if(event.items == StashListener.getLastItem()) return;
+        int gain = event.items - StashListener.getLastItem();
+        if(gain > 0){
+            StashListener.updateLastValues(event.items);
+            if(!CollTracker.session.hasFirstStashUpdate()){
+                CollTracker.session.setFirstStashUpdate(true);
+                return;
+            }
+            CollTracker.session.increaseTotalItems(gain);
+            CollectionHUD.updateLines();
+        }else{
+            System.out.println("ILLEGAL GAIN VALUE: "+gain);
+        }
+
+    }
 
     @SubscribeEvent
     public void onChatReceive(ClientChatReceivedEvent event) {
@@ -70,7 +90,7 @@ public class SackChatListener {
             String str = message.getUnformattedText().substring(timeIndex, message.getUnformattedText().lastIndexOf("s"));
             int seconds = Integer.parseInt(str.split("t")[1].trim());
 
-            String trackedColl = supportedCollections.get(SimpleConfig.collection).toLowerCase();
+            String trackedColl = supportedCollections.get(SimpleConfig.collection);
 
             int removedAmount = getAmountFromMessage(message, trackedColl, REMOVED_INDEX);
 
@@ -99,10 +119,7 @@ public class SackChatListener {
             CollTracker.session.increaseTotalItems(gainAmount);
             CollTracker.session.updateSackMessage();
 
-            CollectionHUD.displayedCPH = String.format("%,d", CollTracker.session.getCollectionPerHour()) +"/h";
-            CollectionHUD.displayedGain = String.format("%,d", CollTracker.session.getTotalItemsGained());
-            CollectionHUD.efficiencyStr = new DecimalFormat("#.##").format(CollTracker.session.getEfficiency() * 100) + "%";
-            CollectionHUD.medianStr = String.format("%,d", CollTracker.session.getMedianItems());
+            CollectionHUD.updateLines();
 
         }
     }
