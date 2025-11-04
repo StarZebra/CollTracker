@@ -28,7 +28,7 @@ import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
 
-@Mod(modid = "colltracker", useMetadata=true)
+@Mod(modid = "colltracker", useMetadata = true)
 public class CollTracker {
 
     public static File statsDir = new File("config/colltracker");
@@ -43,7 +43,7 @@ public class CollTracker {
     private static boolean shouldSaveCollections = true;
 
     @Mod.EventHandler
-    public void preInit(FMLPreInitializationEvent event){
+    public void preInit(FMLPreInitializationEvent event) {
         StatsHelper.load();
     }
 
@@ -51,11 +51,11 @@ public class CollTracker {
     public void init(FMLInitializationEvent event) {
         mc = Minecraft.getMinecraft();
 
-        if(!collectionsFile.exists() && shouldSaveCollections){
+        if (!collectionsFile.exists() && shouldSaveCollections) {
             mc.addScheduledTask(() -> SackChatListener.supportedCollections = APIFetcher.fetchCollections(COLLECTION_URL));
 
             try {
-                if(collectionsFile.createNewFile()){
+                if (collectionsFile.createNewFile()) {
                     trySaveCollectionsFile();
                 }
             } catch (IOException e) {
@@ -87,20 +87,20 @@ public class CollTracker {
     }
 
     @SubscribeEvent
-    public void onSecond(SecondPassedEvent event){
-        if(event.getTotalSeconds() % 60 == 0){
+    public void onSecond(SecondPassedEvent event) {
+        if (event.getTotalSeconds() % 60 == 0) {
             StatsHelper.save();
         }
-        if(shouldSaveCollections && event.getTotalSeconds() % 20 == 0){
+        if (shouldSaveCollections && event.getTotalSeconds() % 20 == 0) {
             trySaveCollectionsFile();
         }
     }
 
-    private void trySaveCollectionsFile(){
+    private void trySaveCollectionsFile() {
         Map<Integer, String> collections = SackChatListener.supportedCollections;
         if (collections.isEmpty()) return;
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        try (FileWriter writer = new FileWriter(collectionsFile)){
+        try (FileWriter writer = new FileWriter(collectionsFile)) {
             gson.toJson(collections, writer);
             LOGGER.info("Successfully wrote to file {}", collectionsFile);
             shouldSaveCollections = false;
@@ -110,27 +110,26 @@ public class CollTracker {
         }
     }
 
-    private void tryLoadCollectionsFile(){
-        if(!collectionsFile.exists()) return;
+    private void tryLoadCollectionsFile() {
+        if (!collectionsFile.exists()) return;
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        try (FileReader reader = new FileReader(collectionsFile)){
+        try (FileReader reader = new FileReader(collectionsFile)) {
             Map<String, String> data = gson.fromJson(reader, Map.class);
             Map<Integer, String> realData = new HashMap<>();
-            if(data == null) return;
-            LOGGER.info("Successfully read from file {}",collectionsFile);
-            data.forEach((k,v) -> realData.put(Integer.parseInt(String.valueOf(k)), v));
+            if (data == null) return;
+            LOGGER.info("Successfully read from file {}", collectionsFile);
+            data.forEach((k, v) -> realData.put(Integer.parseInt(String.valueOf(k)), v));
             SackChatListener.supportedCollections = realData;
             shouldSaveCollections = false;
         } catch (IOException e) {
-            LOGGER.error("Failed to read file {}",collectionsFile);
+            LOGGER.error("Failed to read file {}", collectionsFile);
             LOGGER.error(e.getStackTrace());
         }
     }
 
-    public static boolean isSessionActive(){
+    public static boolean isSessionActive() {
         return session != null && session.isActive();
     }
-
 
 
 }

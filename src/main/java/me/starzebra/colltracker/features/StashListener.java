@@ -5,6 +5,7 @@ import me.starzebra.colltracker.events.PacketEvent;
 import me.starzebra.colltracker.events.StashUpdateEvent;
 import me.starzebra.colltracker.utils.ItemUtils;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.inventory.GuiChest;
 import net.minecraft.inventory.ContainerChest;
 import net.minecraft.inventory.Slot;
@@ -50,8 +51,9 @@ public class StashListener {
         if(!CollTracker.isSessionActive()) return;
         if(CollTracker.session.isPaused()) return;
         if(openedStash){
-            if(Minecraft.getMinecraft().currentScreen == null) return;
-            GuiChest screen = (GuiChest) Minecraft.getMinecraft().currentScreen;
+            GuiScreen guiScreen = Minecraft.getMinecraft().currentScreen;
+            if(guiScreen == null) return;
+            GuiChest screen = (GuiChest) guiScreen;
             ContainerChest containerChest = (ContainerChest) screen.inventorySlots;
 
             String trackedColl = CollTracker.session.getTrackedCollection().toLowerCase();

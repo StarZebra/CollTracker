@@ -1,6 +1,7 @@
 package me.starzebra.colltracker;
 
 import me.starzebra.colltracker.config.SimpleConfig;
+import me.starzebra.colltracker.features.StashListener;
 import me.starzebra.colltracker.hud.CollectionHUD;
 import me.starzebra.colltracker.statistics.StatsManager;
 
@@ -17,6 +18,7 @@ public class TrackerSession {
     boolean firstStashUpdate;
     long sessionStartNanos;
     long lastSackMessageNanos;
+    int startStashItems;
     int totalItemsGained;
     int trackedSeconds;
     List<Integer> sackUpdatesList;
@@ -34,10 +36,12 @@ public class TrackerSession {
         this.trackedSeconds = 0;
         this.sackUpdatesList = new ArrayList<>();
         this.firstStashUpdate = false;
+        this.startStashItems = 0;
     }
 
-    public void setFirstStashUpdate(boolean bool){
+    public void setFirstStashUpdate(boolean bool, int startStash){
         this.firstStashUpdate = bool;
+        this.startStashItems = startStash;
     }
 
     public boolean hasFirstStashUpdate(){
@@ -79,9 +83,22 @@ public class TrackerSession {
         if(SimpleConfig.saveStats){
             saveSessionStats(false);
         }
+        printSessionStats();
         this.isActive = false;
         CollTracker.session = null;
         CollectionHUD.clearLines();
+    }
+
+    public void printSessionStats(){
+        System.out.println("Stash started at "+ startStashItems + " items");
+        System.out.println("Last known sack " + StashListener.getLastItem() + " items");
+        System.out.println("Total gain "+ totalItemsGained + " items");
+        System.out.println("Session start nanos " + sessionStartNanos + " nanos");
+        System.out.println("Total tracked seconds " + trackedSeconds + " seconds");
+        System.out.println("Total time elapsed " + getElapsedSeconds() + " seconds");
+        System.out.println("Efficiency " + getEfficiency());
+        System.out.println("CPH " + getCollectionPerHour());
+        System.out.println("Average sack " + getMedianItems());
     }
 
     public void stopWithContext(String context){
@@ -90,8 +107,10 @@ public class TrackerSession {
                 if(SimpleConfig.saveStats){
                     saveSessionStats(true);
                 }
+                printSessionStats();
                 break;
             case "dontsave":
+                printSessionStats();
                 break;
             default:
                 CollTracker.LOGGER.info("Stop context '{}' not handled, contact developer to fix.", context);
@@ -113,12 +132,14 @@ public class TrackerSession {
     }
 
     public void increaseTotalItems(int gain){
+        System.out.println("Adding "+ gain + " to total items.");
         this.totalItemsGained += gain;
         if(gain < 160) return;
         updateSackList(gain/160);
     }
 
     public void increaseTrackedSeconds(int gain){
+        System.out.println("Adding "+ gain + " to tracked seconds.");
         this.trackedSeconds += gain;
     }
 

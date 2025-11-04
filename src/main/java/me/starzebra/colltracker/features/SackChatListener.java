@@ -61,14 +61,19 @@ public class SackChatListener {
         if(!CollTracker.isSessionActive()) return;
         if(CollTracker.session.isPaused()) return;
 
-        if(event.items == StashListener.getLastItem()) return;
+        CollTracker.LOGGER.info("Detected a stash update with values\nitems {}\nnanos {}", event.items, event.nanoTime);
+
+        if(!CollTracker.session.hasFirstStashUpdate()){
+            CollTracker.session.setFirstStashUpdate(true, event.items);
+            StashListener.updateLastValues(event.items);
+            CollTracker.LOGGER.info("Set first stash update with {}", event.items);
+            return;
+        }
+
+        if(event.items <= StashListener.getLastItem()) return;
         int gain = event.items - StashListener.getLastItem();
         if(gain > 0){
             StashListener.updateLastValues(event.items);
-            if(!CollTracker.session.hasFirstStashUpdate()){
-                CollTracker.session.setFirstStashUpdate(true);
-                return;
-            }
             CollTracker.session.increaseTotalItems(gain);
             CollectionHUD.updateLines();
         }else{
