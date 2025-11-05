@@ -12,20 +12,22 @@ import java.util.concurrent.TimeUnit;
 
 public class TrackerSession {
 
-    String trackedCollection;
-    boolean isActive;
-    boolean isPaused;
-    boolean firstStashUpdate;
-    long sessionStartNanos;
-    long lastSackMessageNanos;
-    int startStashItems;
-    int totalItemsGained;
-    int trackedSeconds;
-    List<Integer> sackUpdatesList;
-    final int MAX_LIST_SIZE = 100;
+    private String trackedCollection;
+    private boolean isActive;
+    private boolean isPaused;
+    private boolean firstStashUpdate;
+    private long sessionStartNanos;
+    private long lastSackMessageNanos;
+    private int startStashItems;
+    private int totalItemsGained;
+    private int trackedSeconds;
+    private int totalStashGain;
+    private int totalSackGain;
+    private List<Integer> sackUpdatesList;
+    private final int MAX_LIST_SIZE = 100;
 
-    long pausedNanos;
-    long resumedNanos;
+    private long pausedNanos;
+    private long resumedNanos;
 
     public TrackerSession(String trackedColl) {
         this.trackedCollection = trackedColl.toLowerCase();
@@ -37,6 +39,8 @@ public class TrackerSession {
         this.sackUpdatesList = new ArrayList<>();
         this.firstStashUpdate = false;
         this.startStashItems = 0;
+        this.totalSackGain = 0;
+        this.totalStashGain = 0;
     }
 
     public void setFirstStashUpdate(boolean bool, int startStash){
@@ -90,6 +94,7 @@ public class TrackerSession {
     }
 
     public void printSessionStats(){
+        if(!SimpleConfig.debugMsgs) return;
         System.out.println("Stash started at "+ startStashItems + " items");
         System.out.println("Last known sack " + StashListener.getLastItem() + " items");
         System.out.println("Total gain "+ totalItemsGained + " items");
@@ -131,15 +136,18 @@ public class TrackerSession {
 
     }
 
-    public void increaseTotalItems(int gain){
-        System.out.println("Adding "+ gain + " to total items.");
+    public void increaseTotalItems(int gain, boolean stashGain){
         this.totalItemsGained += gain;
+        if(stashGain){
+            this.totalStashGain += gain;
+        } else {
+            this.totalSackGain += gain;
+        }
         if(gain < 160) return;
         updateSackList(gain/160);
     }
 
     public void increaseTrackedSeconds(int gain){
-        System.out.println("Adding "+ gain + " to tracked seconds.");
         this.trackedSeconds += gain;
     }
 
@@ -183,6 +191,24 @@ public class TrackerSession {
         }
     }
 
+    public String getStashSackSplit(){
+        StringBuilder sb = new StringBuilder();
+        if(SimpleConfig.rateSplitOption){
+            sb.append(this.totalStashGain)
+                    .append("/")
+                    .append(this.totalSackGain);
+        }else{
+            if(this.totalItemsGained <= 0) return "";
+            float stash = (float) this.totalStashGain / this.totalItemsGained;
+            float sack = (float) this.totalSackGain / this.totalItemsGained;
+            sb.append(String.format("%.0f", (stash)*100))
+                    .append("%/")
+                    .append(String.format("%.0f", (sack)*100))
+                    .append("%");
+        }
+        return sb.toString();
+    }
+
     public long getElapsedSeconds(){
         if(!isActive || sessionStartNanos == 0L) return 0L;
         long now = System.nanoTime();
@@ -190,7 +216,7 @@ public class TrackerSession {
     }
 
     public float getEfficiency(){
-        return (float) this.trackedSeconds / this.getElapsedSeconds();
+        return Math.min((float) this.trackedSeconds / this.getElapsedSeconds(), 1);
     }
 
     public int getCollectionPerHour(){

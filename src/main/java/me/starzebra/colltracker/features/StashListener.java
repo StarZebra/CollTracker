@@ -18,11 +18,9 @@ public class StashListener {
 
     private boolean openedStash = false;
     private static int lastItemAmount = 0;
-    private static long lastStashOpen = 0;
 
     public static void updateLastValues(int items) {
         lastItemAmount = items;
-        lastStashOpen = System.nanoTime();
     }
 
     @SubscribeEvent
@@ -41,10 +39,6 @@ public class StashListener {
         return lastItemAmount;
     }
 
-    public static long getLastStash(){
-        return lastStashOpen;
-    }
-
     @SubscribeEvent
     public void onTick(TickEvent.ClientTickEvent event){
         if(event.phase != TickEvent.Phase.END) return;
@@ -60,7 +54,6 @@ public class StashListener {
 
             for (Slot slot : containerChest.inventorySlots){
                 String itemName = ItemUtils.getUnformattedItemName(slot.getStack());
-                System.out.println("Tick tech " + itemName);
                 if(itemName.toLowerCase().startsWith(trackedColl) && itemName.contains("x")){
                     String strCount = itemName.substring(itemName.indexOf("x") +1);
                     int gainAmount = Integer.parseInt(strCount.replaceAll(",", ""));

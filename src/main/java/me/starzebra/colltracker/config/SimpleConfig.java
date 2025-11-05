@@ -63,10 +63,28 @@ public class SimpleConfig extends Config {
     )
     public static int collection = 0;
 
+    @Checkbox(
+            name = "Show rate split",
+            description = "Whether to show the (stash/sacks) split in the HUD",
+            category = "HUD"
+    )
+    public static boolean shouldShowRateSplit = false;
+
+    @DualOption(
+            name = "Rate split display",
+            description = "Whether to display the rate split in percent or strict numbers",
+            left = "Percent",
+            right = "Numbers",
+            category = "HUD"
+    )
+    public static boolean rateSplitOption = false;
+
     @HUD(
             name = "Collection Tracker HUD",
             category = "HUD"
     )
     public CollectionHUD collectionHUD = new CollectionHUD();
+
+
 
 }

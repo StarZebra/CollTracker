@@ -24,7 +24,7 @@ public class CollectionHUD extends TextHud {
     protected void getLines(List<String> lines, boolean example) {
         if(example && !CollTracker.isSessionActive()){
             lines.add("§bCollection Tracker");
-            lines.add("§bDUMMYCOLL: 2,000,000,000");
+            lines.add("§bDUMMYCOLL: 2,000,000,000 | (33%/67%)");
             lines.add("§bRates: 50,000,000/h");
             lines.add("§bEfficiency: 99.78%");
             lines.add("§bTime Elapsed: 144,000s");
@@ -32,7 +32,17 @@ public class CollectionHUD extends TextHud {
         }
         if(SimpleConfig.colltracker && CollTracker.isSessionActive()){
             lines.add("§bCollection Tracker");
-            lines.add("§b"+SackChatListener.supportedCollections.getOrDefault(SimpleConfig.collection, "NaC") + ": " + displayedGain);
+            StringBuilder sb = new StringBuilder();
+            sb.append("§b")
+                    .append(SackChatListener.supportedCollections.getOrDefault(SimpleConfig.collection, "NaC"))
+                    .append(": ")
+                    .append(displayedGain);
+            if(SimpleConfig.shouldShowRateSplit){
+                sb.append(" | (")
+                        .append(CollTracker.session.getStashSackSplit())
+                        .append(")");
+            }
+            lines.add(sb.toString());
             lines.add("§bRates: " + displayedCPH);
             lines.add("§bEfficiency: " + efficiencyStr);
             lines.add("§bTime Elapsed: " + timeElapsedStr);
@@ -48,6 +58,10 @@ public class CollectionHUD extends TextHud {
         displayedGain = String.format("%,d", CollTracker.session.getTotalItemsGained());
         efficiencyStr = new DecimalFormat("#.##").format(CollTracker.session.getEfficiency() * 100) + "%";
         medianStr = String.format("%,d", CollTracker.session.getMedianItems());
+    }
+
+    public static void updateLinesStashEdition(){
+        displayedGain = String.format("%,d", CollTracker.session.getTotalItemsGained());
     }
 
     public static void clearLines(){

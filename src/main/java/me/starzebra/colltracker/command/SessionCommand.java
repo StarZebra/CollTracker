@@ -51,6 +51,7 @@ public class SessionCommand {
                     SimpleConfig.collection = i;
                     CollTracker.session.start();
                     CollTracker.mc.thePlayer.addChatMessage(new ChatComponentText("§eStarted new session tracking '"+coll+"'"));
+                    CollTracker.mc.thePlayer.addChatMessage(new ChatComponentText("§8Remember to do '/viewstash material' if you want your stash to be tracked"));
                     return;
                 }
                 i++;

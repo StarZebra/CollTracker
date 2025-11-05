@@ -61,12 +61,9 @@ public class SackChatListener {
         if(!CollTracker.isSessionActive()) return;
         if(CollTracker.session.isPaused()) return;
 
-        CollTracker.LOGGER.info("Detected a stash update with values\nitems {}\nnanos {}", event.items, event.nanoTime);
-
         if(!CollTracker.session.hasFirstStashUpdate()){
             CollTracker.session.setFirstStashUpdate(true, event.items);
             StashListener.updateLastValues(event.items);
-            CollTracker.LOGGER.info("Set first stash update with {}", event.items);
             return;
         }
 
@@ -74,8 +71,8 @@ public class SackChatListener {
         int gain = event.items - StashListener.getLastItem();
         if(gain > 0){
             StashListener.updateLastValues(event.items);
-            CollTracker.session.increaseTotalItems(gain);
-            CollectionHUD.updateLines();
+            CollTracker.session.increaseTotalItems(gain, true);
+            CollectionHUD.updateLinesStashEdition();
         }else{
             System.out.println("ILLEGAL GAIN VALUE: "+gain);
         }
@@ -121,7 +118,7 @@ public class SackChatListener {
             if(CollTracker.session.isPaused()) return;
 
             CollTracker.session.increaseTrackedSeconds(seconds);
-            CollTracker.session.increaseTotalItems(gainAmount);
+            CollTracker.session.increaseTotalItems(gainAmount, false);
             CollTracker.session.updateSackMessage();
 
             CollectionHUD.updateLines();
