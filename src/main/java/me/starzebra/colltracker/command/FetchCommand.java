@@ -20,7 +20,7 @@ public class FetchCommand {
         Map<Integer, String> collections = APIFetcher.fetchCollections(CollTracker.COLLECTION_URL);
 
         if(collections.isEmpty()){
-            CollTracker.mc.thePlayer.addChatMessage(new ChatComponentText("§cCollections returned empty, maybe hypixel api is down. Wait a couple minutes or contact developer."));
+            CollTracker.mc.thePlayer.addChatMessage(new ChatComponentText("§cCollections returned empty, maybe hypixel api is down. Wait a couple of minutes or contact developer."));
             return;
         }
 

@@ -84,6 +84,7 @@ public class CollTracker {
 
         //Save stats file on quit
         Runtime.getRuntime().addShutdownHook(new Thread(StatsHelper::save));
+        Runtime.getRuntime().addShutdownHook(new Thread(this::trySaveCollectionsFile));
     }
 
     @SubscribeEvent
@@ -125,6 +126,7 @@ public class CollTracker {
             LOGGER.error("Failed to read file {}", collectionsFile);
             LOGGER.error(e.getStackTrace());
         }
+
     }
 
     public static boolean isSessionActive() {

@@ -57,7 +57,8 @@ public class SimpleConfig extends Config {
                     "Hard Stone", "Mithril",
                     "Emerald", "Red Sand",
                     "Ice", "Glacite",
-                    "Sulphur", "Netherrack"},
+                    "Sulphur", "Netherrack",
+                    "Precursor Parts"},
 
             category = "Mining"
     )
@@ -78,6 +79,20 @@ public class SimpleConfig extends Config {
             category = "HUD"
     )
     public static boolean rateSplitOption = false;
+
+    @Switch(
+            name = "Show average sack",
+            description = "Whether to display your average sack gain on the HUD.",
+            category = "HUD"
+    )
+    public static boolean showAverageSack = false;
+
+    @Switch(
+            name = "Show efficiency",
+            description = "Whether to display your efficiency on the HUD.",
+            category = "HUD"
+    )
+    public static boolean showEfficiency = false;
 
     @HUD(
             name = "Collection Tracker HUD",

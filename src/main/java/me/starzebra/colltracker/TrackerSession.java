@@ -129,7 +129,7 @@ public class TrackerSession {
         StatsManager.incrementGrouped("collections", this.trackedCollection, this.totalItemsGained);
         StatsManager.incrementBy("timeSpentMining", trackedSeconds);
         if(timeout){
-            StatsManager.incrementBy("totalSessionTime", (int) (getElapsedSeconds() - 60));
+            StatsManager.incrementBy("totalSessionTime", (int) (getElapsedSeconds() - 90));
         }else{
             StatsManager.incrementBy("totalSessionTime", (int) getElapsedSeconds());
         }

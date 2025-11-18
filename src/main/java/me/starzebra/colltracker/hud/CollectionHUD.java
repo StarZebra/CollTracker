@@ -44,9 +44,13 @@ public class CollectionHUD extends TextHud {
             }
             lines.add(sb.toString());
             lines.add("§bRates: " + displayedCPH);
-            lines.add("§bEfficiency: " + efficiencyStr);
+            if(SimpleConfig.showEfficiency){
+                lines.add("§bEfficiency: " + efficiencyStr);
+            }
             lines.add("§bTime Elapsed: " + timeElapsedStr);
-            lines.add("§bAverage Sack: " + medianStr);
+            if(SimpleConfig.showAverageSack){
+                lines.add("§bAverage Sack: " + medianStr);
+            }
             if(CollTracker.session.isPaused()){
                 lines.add("§c§lPAUSED");
             }

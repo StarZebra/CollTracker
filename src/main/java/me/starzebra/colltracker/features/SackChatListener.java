@@ -13,9 +13,7 @@ import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.network.FMLNetworkEvent;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class SackChatListener {
 
@@ -23,7 +21,7 @@ public class SackChatListener {
 
 
     final int ENCHANTED = 160;
-    long TIMEOUT_NANOS = 60000000000L;
+    long TIMEOUT_NANOS = 90000000000L;
 
     private static final int REMOVED_INDEX = 3;
     private static final int GAINED_INDEX = 0;
@@ -40,6 +38,7 @@ public class SackChatListener {
             }
 
             if(System.nanoTime() - CollTracker.session.getLastSackMessageNanos() >= TIMEOUT_NANOS){
+
                 CollTracker.session.stopWithContext("timeout");
                 return;
             }
@@ -134,6 +133,8 @@ public class SackChatListener {
         int totalAmount = 0;
         ChatStyle style = message.getSiblings().get(index).getChatStyle();
 
+        boolean checkForParts = "Precursor Parts".equals(trackedColl);
+
         // Fix for when there is no removed amount in sack message
         if(style.getChatHoverEvent() == null) return 0;
         // Fix for when only removed amount in sack message
@@ -142,12 +143,19 @@ public class SackChatListener {
         List<IChatComponent> siblings = style.getChatHoverEvent().getValue().getSiblings();
         for (int i = 0; i < siblings.size(); i++) {
             IChatComponent sibling = siblings.get(i);
-            if (sibling.getUnformattedText().toLowerCase().contains(trackedColl.toLowerCase())) {
+            String name = sibling.getUnformattedText();
+            if(checkForParts){
+                if(partsList.contains(name)){
+                    int amount = Integer.parseInt(siblings.get(i - 1).getUnformattedText().trim().replaceAll("[,\\-]", ""));
+                    totalAmount += amount;
+                    continue;
+                }
+            }
+            if (name.contains(trackedColl.toLowerCase())) {
                 int amount = Integer.parseInt(siblings.get(i - 1).getUnformattedText().trim().replaceAll("[,\\-]", ""));
-                String item = sibling.getUnformattedText();
-                if (item.startsWith("Enchanted ")) {
+                if (name.startsWith("Enchanted ")) {
                     amount *= ENCHANTED;
-                    if(item.endsWith(" Block")){
+                    if(name.endsWith(" Block")){
                         amount *= ENCHANTED;
                     }
                 }
@@ -157,4 +165,6 @@ public class SackChatListener {
         return totalAmount;
     }
 
+    private static final ArrayList<String> partsList =
+            new ArrayList<>(Arrays.asList("Control Switch", "Electron Transmitter", "Robotron Reflector", "FTX 3070", "Synthetic Heart", "Superlite Motor"));
 }

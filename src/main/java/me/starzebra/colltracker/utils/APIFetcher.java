@@ -32,6 +32,9 @@ public class APIFetcher {
                     list.add(item.getValue().getAsJsonObject().get("name").getAsString());
                 }
 
+                //Add support for automaton parts
+                list.add("Precursor Parts");
+
                 return parseData(list);
 
             }else{
