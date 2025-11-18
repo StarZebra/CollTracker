@@ -6,10 +6,16 @@ Uses [OneConfig](https://github.com/Polyfrost/OneConfig) for the HUD.
 
 command /ts
 
-any issues report to dc @astoned
+## Where are the new collections?
+To fix outdated collections do '/cttryfetchcollections'
+Keep in mind I cant change the dropdown in the config to automatically account for new updates so if theres a collection missing (that isnt gemstones) let me know and ill update asap
 
-HOW TO USE STASH FEATURE:
-1. Start a tracking session, (either '/ts startset <collection>' or let sack message automatically start session)
+In the mean time you can still track the new collection by using the command '/ts startset [collection]'
+
+## HOW TO USE STASH FEATURE:
+1. Start a tracking session, (either '/ts startset [collection]' or let sack message automatically start session)
 2. Do /viewstash material and close it
 3. Do some mining
-4. Repeat steps 2-3 to get correct rates on the tracker
+4. Repeat steps 2-3 to get correct rates on the tracker (dont have to keep opening, if you dont want live rate updates)
+
+# any issues report to dc @astoned
